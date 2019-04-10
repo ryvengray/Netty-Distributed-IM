@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>IM</title>
+    <link rel="stylesheet" href="css/amazeui.min.css"/>
+    <link rel="stylesheet" href="css/login.css"/>
+
+</head>
+<body>
+<div class="header">
+    <div class="am-g">
+        <h1>IM</h1>
+    </div>
+    <hr/>
+</div>
+<div class="am-g" id="app">
+    <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+        <h3>登录</h3>
+        <hr>
+        <br>
+        <form method="post" class="am-form">
+            <label for="username">昵称:</label>
+            <input v-model="username" type="text" id="username">
+            <br/>
+            <div class="am-cf">
+                <input v-on:click="login" type="button" name="" value="登 录" class="am-btn am-btn-primary am-btn-sm am-fl">
+            </div>
+        </form>
+        <hr>
+    </div>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/login.js"></script>
+</html>

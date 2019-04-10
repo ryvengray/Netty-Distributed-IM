@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>IM-Chat</title>
+    <link rel="stylesheet" href="css/index.css"/>
+</head>
+<body>
+<div id="chat">
+    <div class="header" v-text="notify"></div>
+    <div class="box flex">
+        <div class="box-left flex">
+            <user-card v-for="(item, key) in users"
+                v-bind:userId="item.userId"
+                v-bind:username="item.username"
+                v-bind:active="item.active">
+            </user-card>
+        </div>
+        <div class="box-right flex">
+            <div class="content-box">
+                <msg v-for="(item, key) in messages"
+                     v-bind:username="item.username"
+                     v-bind:content="item.msg"
+                     v-bind:me="item.me"></msg>
+            </div>
+            <div class="input-box flex">
+                <textarea v-on:keyup.enter="send" v-model="sendMsg" placeholder="Enter to send..."></textarea>
+                <button class="send-button" type="button">发送</button>
+            </div>
+        </div>
+    </div></div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript" src="js/chat.js"></script>
+</html>

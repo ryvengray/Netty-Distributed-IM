@@ -1,0 +1,14 @@
+zk:
+  address: localhost:2181
+  connect-timeout: 10000
+server:
+  port: 8888
+  servlet:
+    context-path: /route
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8768/eureka/
+# 设置服务的timeout时间
+ribbon:
+  ReadTimeout: 5000

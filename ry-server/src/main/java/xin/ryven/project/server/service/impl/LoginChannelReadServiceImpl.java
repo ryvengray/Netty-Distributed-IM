@@ -1,14 +1,14 @@
 package xin.ryven.project.server.service.impl;
 
-import io.netty.buffer.Unpooled;
+import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.CharsetUtil;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import xin.ryven.project.common.entity.User;
+import xin.ryven.project.common.enums.MsgType;
 import xin.ryven.project.common.spring.SpringBeanUtils;
-import xin.ryven.project.common.tools.MsgTools;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.server.holder.NettyAttrHolder;
 import xin.ryven.project.server.holder.SocketHolder;
@@ -39,7 +39,9 @@ public class LoginChannelReadServiceImpl implements ChannelReadService {
         //保存用户信息
         NettyAttrHolder.saveUser(ctx, user);
         log.info("{} login success", user);
-        ctx.channel().writeAndFlush(Unpooled.copiedBuffer(MsgTools.loginMessage("OK"), CharsetUtil.UTF_8))
+        //返回成功消息
+        MsgVo ret = MsgVo.builder().content("OK").type(MsgType.LOGIN.getType()).build();
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(ret)))
                 .addListener((ChannelFutureListener) future -> {
                     if (!future.isSuccess()) {
                         log.warn("Send login message to {} failed, close channel.", userId);

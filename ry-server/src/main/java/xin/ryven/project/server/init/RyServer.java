@@ -7,6 +7,10 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +46,15 @@ public class RyServer {
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
-                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                    protected void initChannel(NioSocketChannel ch) {
                         ch.pipeline()
+                                // 空闲心跳检测
                                 .addLast(new IdleStateHandler(30, 0, 0))
-                                .addLast(new RyServerHandler());
+                                .addLast("http-codec", new HttpServerCodec())
+                                .addLast("aggregator", new HttpObjectAggregator(65536))
+                                .addLast("http-chunked", new ChunkedWriteHandler())
+                                // 服务端的Handler
+                                .addLast("handler", new RyServerHandler());
                     }
                 });
         ChannelFuture future = b.bind().sync();
@@ -61,17 +70,18 @@ public class RyServer {
             throw new RuntimeException("用户已经下线");
         }
         toChannel.writeAndFlush(Unpooled.copiedBuffer(JSON.toJSONString(vo), CharsetUtil.UTF_8))
-        .addListener((ChannelFutureListener)f -> {
-            if (!f.isSuccess()) {
-                log.warn("Send message to {} failed, close channel", NettyAttrHolder.getUser(toChannel));
-                toChannel.close();
-            }
-        });
+                .addListener((ChannelFutureListener) f -> {
+                    if (!f.isSuccess()) {
+                        log.warn("Send message to {} failed, close channel", NettyAttrHolder.getUser(toChannel));
+                        toChannel.close();
+                    }
+                });
     }
 
     /**
      * 下线
      * 1、重复登录，下线之前的channel
+     *
      * @param channel channel
      */
     public void offline(NioSocketChannel channel) {
