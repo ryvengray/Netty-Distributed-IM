@@ -9,10 +9,18 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "password")
 public class User {
 
     private Integer userId;
 
     private String username;
+
+    private String password;
+
+    public User(Integer userId, String username) {
+        this.userId = userId;
+        this.username = username;
+    }
+
 }

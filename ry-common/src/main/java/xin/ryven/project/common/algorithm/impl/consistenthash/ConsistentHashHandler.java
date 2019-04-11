@@ -1,13 +1,13 @@
 package xin.ryven.project.common.algorithm.impl.consistenthash;
 
-import xin.ryven.project.common.algorithm.RouteService;
+import xin.ryven.project.common.algorithm.RouteHandler;
 
 import java.util.List;
 
 /**
  * @author gray
  */
-public class ConsistentHashHandler implements RouteService {
+public class ConsistentHashHandler implements RouteHandler {
 
     private AbstractConsistentHash consistentHash;
 

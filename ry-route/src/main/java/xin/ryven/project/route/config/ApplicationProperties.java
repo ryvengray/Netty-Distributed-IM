@@ -1,4 +1,4 @@
-package xin.ryven.project.server.config;
+package xin.ryven.project.route.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,18 +20,6 @@ public class ApplicationProperties {
     @Value("${zk.client.root}")
     private String zkClientRoot;
 
-    @Value("${zk.client.registry}")
-    private Boolean registry;
-
-    @Value("${server.host}")
-    private String serverHost;
-
-    @Value("${server.im-port}")
-    private Integer serverImPort;
-
-    @Value("${server.port}")
-    private Integer serverPort;
-
-    @Value("${server.heart-beat-time}")
-    private Integer heartBeatTime;
+    @Value("${url.msg.send}")
+    private String sendMsgUrl;
 }

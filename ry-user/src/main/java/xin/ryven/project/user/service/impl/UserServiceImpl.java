@@ -26,20 +26,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String userName) {
-        if (StringUtils.isEmpty(userName)) {
+    public User login(User user) {
+        if (StringUtils.isEmpty(user.getUsername())) {
             throw new UserException("User name can't be null");
         }
         //检查是否重名
-        String userId = redisClient.hget(RedisConstant.USER_NAME_POOL, userName);
-        if (userId != null) {
-            log.info("已被使用昵称 {}", userName);
-            throw new UserException("昵称已被使用");
+        String userStr = redisClient.hget(RedisConstant.USER_NAME_POOL, user.getUsername());
+        if (StringUtils.isEmpty(userStr)) {
+            log.info("用户不存在 {}", user.getUsername());
+            throw new UserException("用户未注册");
+        }
+        User saveUser = JSON.parseObject(userStr, User.class);
+        if (user.getPassword().equals(saveUser.getPassword())) {
+            return saveUser;
+        } else {
+            throw new UserException("密码错误");
+        }
+    }
+
+    @Override
+    public void register(User user) {
+        String userStr = redisClient.hget(RedisConstant.USER_NAME_POOL, user.getUsername());
+        if (!StringUtils.isEmpty(userStr)) {
+            log.info("用户已经注册 {}", userStr);
+            throw new UserException("用于已经注册");
         }
         Integer id = Math.toIntExact(redisClient.incr(RedisConstant.INCR_USER_ID));
-        User user = new User(id, userName);
-        redisClient.set(RedisConstant.USER_PRE + id, JSON.toJSONString(user));
-        redisClient.hset(RedisConstant.USER_NAME_POOL, userName, id.toString());
-        return user;
+        user.setUserId(id);
+        redisClient.hset(RedisConstant.USER_NAME_POOL, user.getUsername(), JSON.toJSONString(user));
+        //备份一份id->name的映射
+        redisClient.set(RedisConstant.USER_ID_NAME + id, user.getUsername());
     }
 }

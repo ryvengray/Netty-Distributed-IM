@@ -14,7 +14,8 @@ public interface ChannelReadService {
     /**
      * 处理消息
      *
-     * @param vo 收到的消息
+     * @param vo  收到的消息
+     * @param ctx ctx
      */
     void process(ChannelHandlerContext ctx, MsgVo vo);
 }

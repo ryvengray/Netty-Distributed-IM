@@ -10,6 +10,7 @@ import xin.ryven.project.server.service.ChannelReadService;
  * @author gray
  */
 public class PingChannelReadServiceImpl implements ChannelReadService {
+
     @Override
     public void process(ChannelHandlerContext ctx, MsgVo vo) {
 

@@ -14,6 +14,7 @@ import xin.ryven.project.server.holder.NettyAttrHolder;
 import xin.ryven.project.server.holder.SocketHolder;
 import xin.ryven.project.server.init.RyServer;
 import xin.ryven.project.server.service.ChannelReadService;
+import xin.ryven.project.server.service.RouteService;
 
 /**
  * 处理登录的逻辑
@@ -25,13 +26,14 @@ public class LoginChannelReadServiceImpl implements ChannelReadService {
 
     @Override
     public void process(ChannelHandlerContext ctx, MsgVo msgVo) {
+        RyServer ryServer = null;
         Integer userId = msgVo.getUserId();
-        User user = new User(userId, msgVo.getUserName());
+        User user = new User(userId, msgVo.getUsername());
         //检查userId是否注册了channel
         NioSocketChannel oldChannel = SocketHolder.channel(userId);
         if (oldChannel != null && oldChannel != ctx.channel()) {
             log.warn("{} 已经登录，关闭已有的channel", user);
-            RyServer ryServer = SpringBeanUtils.getBean(RyServer.class);
+            ryServer = SpringBeanUtils.getBean(RyServer.class);
             ryServer.offline(oldChannel);
         }
         //保存channel信息
@@ -48,6 +50,11 @@ public class LoginChannelReadServiceImpl implements ChannelReadService {
                         future.channel().close();
                     }
                 });
+        //保存用户信息
+        if (ryServer == null) {
+            ryServer = SpringBeanUtils.getBean(RyServer.class);
+        }
+        ryServer.online(userId);
     }
 
 }

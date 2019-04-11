@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 public class TreeMapConsistentHash extends AbstractConsistentHash {
 
     private TreeMap<Long, String> treeMap = new TreeMap<>();
+
     /**
      * 虚拟节点数量
      */
@@ -27,6 +28,9 @@ public class TreeMapConsistentHash extends AbstractConsistentHash {
 
     @Override
     protected String getFirst(String value) {
+        if (treeMap.isEmpty()) {
+            return null;
+        }
         SortedMap<Long, String> tailMap = treeMap.tailMap(hash(value));
         if (tailMap.isEmpty()) {
             return treeMap.firstEntry().getValue();

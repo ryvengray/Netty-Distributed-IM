@@ -11,6 +11,10 @@ public final class RedisConstant {
 
     public static final String USER_PRE = "im:user:";
 
+    public static final String USER_ID_NAME = "im:id:";
+
     public static final String INCR_USER_ID = "user:id";
+
+    public static final String USER_ADDRESS = "address:user:";
 
 }

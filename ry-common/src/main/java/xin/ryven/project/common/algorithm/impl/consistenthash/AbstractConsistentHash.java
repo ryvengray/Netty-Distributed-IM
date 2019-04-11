@@ -1,8 +1,5 @@
 package xin.ryven.project.common.algorithm.impl.consistenthash;
 
-import com.sun.org.apache.xml.internal.security.algorithms.MessageDigestAlgorithm;
-
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

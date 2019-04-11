@@ -12,14 +12,17 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@ToString
 public class MsgVo {
 
     @NotNull(message = "User id can't be null")
     private Integer userId;
 
-    private String userName;
+    private String username;
 
     private Integer toUserId;
+
+    private String toUsername;
 
     @NotNull(message = "Type can't be null")
     private Integer type;

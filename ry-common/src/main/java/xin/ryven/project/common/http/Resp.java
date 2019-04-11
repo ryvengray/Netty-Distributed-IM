@@ -24,6 +24,14 @@ public class Resp<T> {
         return resp;
     }
 
+    public static <T> Resp<T> status(Status status, String msg, T t) {
+        Resp<T> resp = new Resp<>();
+        resp.setCode(status.getCode());
+        resp.setMsg(msg);
+        resp.setData(t);
+        return resp;
+    }
+
     public static Resp status(Status status) {
         Resp resp = new Resp();
         resp.setCode(status.getCode());

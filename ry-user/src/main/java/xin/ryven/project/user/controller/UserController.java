@@ -28,13 +28,25 @@ public class UserController {
     @PostMapping("login")
     public Resp<User> login(@RequestBody User user) {
         try {
-            User loginUser = userService.login(user.getUsername());
+            User loginUser = userService.login(user);
             return Resp.status(Status.OK, loginUser);
         } catch (UserException e) {
-            log.error("Login failed", e);
+            log.error("Login failed, {}", e.getMessage());
             Resp<User> resp = Resp.status(Status.FAILED, null);
             resp.setMsg(e.getMessage());
             return resp;
+        }
+
+    }
+
+    @PostMapping("register")
+    public Resp register(@RequestBody User user) {
+        try {
+            userService.register(user);
+            return Resp.status(Status.OK);
+        } catch (UserException e) {
+            log.error("Register failed", e);
+            return Resp.status(Status.FAILED).setMsg(e.getMessage());
         }
 
     }

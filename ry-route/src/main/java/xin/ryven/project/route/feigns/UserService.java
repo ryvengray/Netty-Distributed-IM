@@ -13,6 +13,14 @@ import xin.ryven.project.common.http.Resp;
 @FeignClient(value = "im-user")
 @Component
 public interface UserService {
+    /**
+     * Register
+     *
+     * @param user username/password
+     * @return User
+     */
+    @PostMapping("user/register")
+    Resp register(@RequestBody User user);
 
     /**
      * 登录

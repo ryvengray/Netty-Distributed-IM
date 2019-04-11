@@ -3,7 +3,6 @@ package xin.ryven.project.server.handler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -15,10 +14,12 @@ import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import xin.ryven.project.common.enums.MsgType;
+import xin.ryven.project.common.spring.SpringBeanUtils;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.server.holder.ChannelReadHolder;
 import xin.ryven.project.server.holder.NettyAttrHolder;
 import xin.ryven.project.server.holder.SocketHolder;
+import xin.ryven.project.server.init.RyServer;
 import xin.ryven.project.server.service.ChannelReadService;
 
 /**
@@ -31,7 +32,8 @@ public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         log.info("{} offline", NettyAttrHolder.getUser(ctx));
-        SocketHolder.remove((NioSocketChannel) ctx.channel());
+            //下线
+        SpringBeanUtils.getBean(RyServer.class).offline((NioSocketChannel) ctx.channel());
     }
 
     @Override

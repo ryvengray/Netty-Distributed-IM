@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>IM</title>
@@ -16,15 +16,21 @@
 </div>
 <div class="am-g" id="app">
     <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
-        <h3>登录</h3>
+        <h3 v-text="doLogin ? '登 录': '注 册'">登 录</h3>
         <hr>
         <br>
         <form method="post" class="am-form">
             <label for="username">昵称:</label>
             <input v-model="username" type="text" id="username">
+            <label for="username">密码:</label>
+            <input v-model="password" type="password" id="password">
             <br/>
             <div class="am-cf">
-                <input v-on:click="login" type="button" name="" value="登 录" class="am-btn am-btn-primary am-btn-sm am-fl">
+                <input v-on:click="action" type="button"
+                       v-bind:value="doLogin ? '登 录': '注 册'"
+                       class="am-btn am-btn-sm am-fl"
+                       v-bind:class="doLogin ? 'am-btn-success': 'am-btn-primary'">
+                <a class="switch" href="javascript:void(0)" v-on:click="doLogin = !doLogin">注册/登录</a>
             </div>
         </form>
         <hr>
@@ -33,5 +39,6 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/md5.js"></script>
 <script src="js/login.js"></script>
 </html>

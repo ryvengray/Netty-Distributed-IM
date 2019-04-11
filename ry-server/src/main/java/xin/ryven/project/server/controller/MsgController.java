@@ -1,9 +1,9 @@
 package xin.ryven.project.server.controller;
 
-import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xin.ryven.project.common.enums.Status;
@@ -32,8 +32,13 @@ public class MsgController {
         if (result.hasErrors()) {
             return Resp.status(Status.FAILED).setMsg(result.getAllErrors().get(0).getDefaultMessage());
         }
-        server.sendMsg(msgVo);
-        return Resp.status(Status.OK);
+        try {
+            server.sendMsg(msgVo);
+            return Resp.status(Status.OK);
+        } catch (RuntimeException e) {
+            return Resp.status(Status.FAILED).setMsg(e.getMessage());
+        }
+
     }
 
 }

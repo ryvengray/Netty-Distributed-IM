@@ -41,8 +41,8 @@ public class ServerApplication implements CommandLineRunner {
                 new SynchronousQueue<>(),
                 new ThreadFactoryBuilder().setNameFormat("Registry-Worker-%d").build());
         singleExecutorService.submit(new ZkRegistryWorker(
-                applicationProperties.getZkClientHost(),
-                applicationProperties.getZkClientImPort(),
+                applicationProperties.getServerHost(),
+                applicationProperties.getServerImPort(),
                 applicationProperties.getServerPort()));
         log.info("End registry");
     }

@@ -10,3 +10,7 @@
 .header p {
     font-size: 14px;
 }
+
+.switch {
+    float: right;
+}

@@ -32,6 +32,12 @@ public class RedisClient {
         }
     }
 
+    public void del(String key) {
+        try (Jedis jedis = jedisPool.getResource()){
+             jedis.del(key);
+        }
+    }
+
     public String get(String key) {
         try (Jedis jedis = jedisPool.getResource()){
             return jedis.get(key);
