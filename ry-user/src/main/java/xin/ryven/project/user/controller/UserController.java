@@ -45,7 +45,7 @@ public class UserController {
             userService.register(user);
             return Resp.status(Status.OK);
         } catch (UserException e) {
-            log.error("Register failed", e);
+            log.error("Register failed: {}", e.getMessage());
             return Resp.status(Status.FAILED).setMsg(e.getMessage());
         }
 

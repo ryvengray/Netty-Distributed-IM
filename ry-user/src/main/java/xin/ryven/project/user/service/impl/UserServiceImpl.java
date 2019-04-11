@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         String userStr = redisClient.hget(RedisConstant.USER_NAME_POOL, user.getUsername());
         if (!StringUtils.isEmpty(userStr)) {
             log.info("用户已经注册 {}", userStr);
-            throw new UserException("用于已经注册");
+            throw new UserException("用户已经注册");
         }
         Integer id = Math.toIntExact(redisClient.incr(RedisConstant.INCR_USER_ID));
         user.setUserId(id);
