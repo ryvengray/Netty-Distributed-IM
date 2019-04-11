@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import xin.ryven.project.common.spring.SpringBeanUtils;
 import xin.ryven.project.server.config.ApplicationProperties;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @SpringBootApplication
 @EnableEurekaClient
+@EnableFeignClients
 @ComponentScan(basePackages = {"xin.ryven.project.server", "xin.ryven.project.common"})
 public class ServerApplication implements CommandLineRunner {
 

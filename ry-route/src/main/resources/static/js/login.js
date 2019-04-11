@@ -54,7 +54,7 @@ let vue = new Vue({
                         var data = res.data
                         if (data.code === 0) {
                             alert('注册成功')
-                            window.location.reload()
+                            vue.doLogin = true
                         } else {
                             alert(data.msg)
                         }

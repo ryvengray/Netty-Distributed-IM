@@ -2,7 +2,6 @@ package xin.ryven.project.server.init;
 
 import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -12,17 +11,19 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import xin.ryven.project.common.entity.User;
 import xin.ryven.project.common.vo.MsgVo;
+import xin.ryven.project.common.vo.ServerAddress;
+import xin.ryven.project.common.vo.feign.SaveUserServer;
+import xin.ryven.project.server.config.ApplicationProperties;
 import xin.ryven.project.server.handler.RyServerHandler;
 import xin.ryven.project.server.holder.NettyAttrHolder;
 import xin.ryven.project.server.holder.SocketHolder;
-import xin.ryven.project.server.service.RouteService;
+import xin.ryven.project.server.feigns.RouteService;
 
 import javax.annotation.PostConstruct;
 import java.net.InetSocketAddress;
@@ -41,10 +42,15 @@ public class RyServer {
     private EventLoopGroup work = new NioEventLoopGroup();
 
     private final RouteService routeService;
+    private final ServerAddress serverAddress;
 
     @Autowired
-    public RyServer(RouteService routeService) {
+    public RyServer(RouteService routeService, ApplicationProperties properties) {
         this.routeService = routeService;
+        this.serverAddress = ServerAddress.builder()
+                .host(properties.getServerHost())
+                .port(properties.getServerImPort())
+                .httpPort(properties.getServerPort()).build();
     }
 
     @PostConstruct
@@ -92,7 +98,7 @@ public class RyServer {
      * 上线
      */
     public void online(Integer userId) {
-        routeService.saveUserChannel(userId);
+        routeService.saveUserChannel(new SaveUserServer(userId, serverAddress));
     }
 
     /**
@@ -104,7 +110,7 @@ public class RyServer {
     public void offline(NioSocketChannel channel) {
         User user = NettyAttrHolder.getUser(channel);
         if (user != null) {
-            routeService.offline(user.getUserId());
+            routeService.offline(user);
         }
         channel.close();
         SocketHolder.remove(channel);

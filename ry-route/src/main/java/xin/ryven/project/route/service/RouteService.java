@@ -1,7 +1,10 @@
 package xin.ryven.project.route.service;
 
+import xin.ryven.project.common.entity.User;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.common.vo.ServerAddress;
+
+import java.util.List;
 
 /**
  * @author gray
@@ -20,7 +23,28 @@ public interface RouteService {
      * 发送消息
      *
      * @param msgVo 消息实体
-     * @return 消息发送结果
      */
     void sendMessage(MsgVo msgVo);
+
+    /**
+     * 下线用户
+     *
+     * @param userId 用户ID
+     */
+    void offline(Integer userId);
+
+    /**
+     * 用户的路由信息保存
+     *
+     * @param userId        用户id
+     * @param serverAddress 服务器信息
+     */
+    void saveUserChannel(Integer userId, ServerAddress serverAddress);
+
+    /**
+     * 获取在线用户
+     *
+     * @return 用户列表
+     */
+    List<User> onlineUsers();
 }

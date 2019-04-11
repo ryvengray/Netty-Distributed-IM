@@ -10,8 +10,11 @@ import xin.ryven.project.common.exception.MsgServerException;
 import xin.ryven.project.common.http.Resp;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.common.vo.ServerAddress;
+import xin.ryven.project.common.vo.feign.SaveUserServer;
 import xin.ryven.project.route.feigns.UserService;
 import xin.ryven.project.route.service.RouteService;
+
+import java.util.List;
 
 
 /**
@@ -37,6 +40,7 @@ public class RouteController {
         }
         Resp<User> login = userService.login(user);
         if (login.getCode() == Status.OK.getCode()) {
+
             return login;
         }
         return Resp.status(Status.FAILED, null).setMsg(login.getMsg());
@@ -51,11 +55,9 @@ public class RouteController {
     }
 
     @GetMapping("serverAddress")
-    public Resp<ServerAddress> routeServer(Integer userId, String username) {
+    public Resp<ServerAddress> routeServer(String username) {
         String s = routeService.routeServer(username);
-        if (s == null) {
-            return Resp.status(Status.FAILED, "没有可用的服务器", null);
-        } else {
+        if (s != null) {
             String[] splits = s.split(":");
             ServerAddress addressVo = ServerAddress.builder()
                     .protocol("ws:")
@@ -63,8 +65,14 @@ public class RouteController {
                     .port(Integer.valueOf(splits[1]))
                     .httpPort(Integer.valueOf(splits[2])).build();
             return Resp.status(Status.OK, addressVo);
-
         }
+        return Resp.status(Status.FAILED, "没有可用的服务器", null);
+    }
+
+    @GetMapping("onlineUsers")
+    public Resp<List<User>> onlineUsers() {
+        List<User> users = routeService.onlineUsers();
+        return Resp.status(Status.OK, users);
     }
 
     @PostMapping("msg/send")
@@ -81,6 +89,18 @@ public class RouteController {
             log.error("消息发送失败 {}", e.getMessage());
             return Resp.status(Status.FAILED).setMsg(e.getMessage());
         }
+    }
+
+    @PostMapping("user/saveServer")
+    public Resp userServerSave(@RequestBody SaveUserServer saveUserServer) {
+        routeService.saveUserChannel(saveUserServer.getUserId(), saveUserServer.getServerAddress());
+        return Resp.status(Status.OK);
+    }
+
+    @PostMapping("user/offline")
+    public Resp userOffline(@RequestBody User user) {
+        routeService.offline(user.getUserId());
+        return Resp.status(Status.OK);
     }
 
 }

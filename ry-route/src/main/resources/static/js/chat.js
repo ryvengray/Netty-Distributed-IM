@@ -3,6 +3,9 @@ const TYPE_MSG = 2
 
 let getServerUrl = '/route/serverAddress'
 let sendMsgUrl = '/route/msg/send'
+let onlineUserUrl = '/route/onlineUsers'
+
+let allMessages = {}
 
 var imWebSocket = null
 
@@ -74,10 +77,11 @@ let vue = new Vue({
     el: '#chat',
     data: {
         users: [{username: '展示', userId: 1}, {username: 'Gray', userId: 1, active: true}],
-        messages: [{username: '站内', msg: '内容'}, {username: '站内', msg: '内容', me: true}],
+        messages: [],
         sendMsg: '',
         notify: '',
-        user: {}
+        user: {},
+        chatUser: {}
     },
     mounted() {
         this.init()
@@ -90,6 +94,49 @@ let vue = new Vue({
             } else {
                 this.user = JSON.parse(u)
                 this.getServerAndConnect()
+                //获取用户列表
+                this.getOnlineUsers();
+            }
+        },
+        send() {
+            let msg = this.sendMsg.trim()
+            if (msg) {
+                let chatUser = this.chatUser
+                if (!chatUser.userId) {
+                    console.warn("没有active用户")
+                    return
+                }
+                let msgData = {
+                    userId: this.user.userId,
+                    username: this.user.username,
+                    toUserId: chatUser.userId,
+                    toUsername: chatUser.username,
+                    content: msg,
+                    type: TYPE_MSG
+                }
+                axios.post(sendMsgUrl, msgData)
+                    .then(function (res) {
+                        if (res.status === 200) {
+                            var data = res.data
+                            if (data.code === 0) {
+                                //socket 连接
+                                let messages = vue.messages
+                                messages.push({'username': vue.user.username, 'msg': msg, 'me': true})
+                                vue.messages = messages
+                                vue.sendMsg = ''
+                            } else {
+                                alert(data.msg)
+                            }
+                        } else {
+                            alert(res.statusText)
+                        }
+                    })
+                    .catch(function (reason) {
+                        console.log(reason)
+                        alert('服务器错误')
+                    })
+            } else {
+                this.sendMsg = ''
             }
         },
         getServerAndConnect() {
@@ -113,52 +160,6 @@ let vue = new Vue({
                     alert('服务器错误')
                 })
         },
-        send() {
-            let msg = this.sendMsg.trim()
-            if (msg) {
-                let userList = this.users
-                var toUser
-                for (let i in userList) {
-                    if (userList[i].active) {
-                        toUser = userList[i]
-                        break
-                    }
-                }
-                if (!toUser) {
-                    console.warn("没有active用户")
-                    return
-                }
-                let msgData = {
-                    userId: this.user.userId,
-                    username: this.user.username,
-                    toUserId: toUser.userId,
-                    toUsername: toUser.username,
-                    content: msg,
-                    type: TYPE_MSG
-                }
-                axios.post(sendMsgUrl, msgData)
-                    .then(function (res) {
-                        if (res.status === 200) {
-                            var data = res.data
-                            if (data.code === 0) {
-                                //socket 连接
-                                console.log('发送成功')
-                                vue.sendMsg = ''
-                            } else {
-                                alert(data.msg)
-                            }
-                        } else {
-                            alert(res.statusText)
-                        }
-                    })
-                    .catch(function (reason) {
-                        console.log(reason)
-                        alert('服务器错误')
-                    })
-            } else {
-                this.sendMsg = ''
-            }
-        },
         received(data) {
             //收到消息作出处理
             switch (data.type) {
@@ -168,9 +169,36 @@ let vue = new Vue({
                     }
                     break
                 case TYPE_MSG:
-                    console.log('收到消息:', data.content)
+                    let toUser = data.toUserId
+                    let messages = vue.messages
+                    messages.push({'username': data.username, 'msg': data.content})
+                    vue.messages = messages
                 default:
             }
+        },
+        getOnlineUsers() {
+            axios.get(onlineUserUrl)
+                .then(function (res) {
+                    if (res.status === 200) {
+                        var data = res.data
+                        if (data.code === 0) {
+                            let users = data.data
+                            if (users.length > 0) {
+                                users[0].active = true
+                                vue.chatUser = users[0]
+                            }
+                            vue.users = users
+                        } else {
+                            alert(data.msg)
+                        }
+                    } else {
+                        alert(res.statusText)
+                    }
+                })
+                .catch(function (reason) {
+                    console.log(reason)
+                    alert('服务器错误')
+                })
         }
     }
 })

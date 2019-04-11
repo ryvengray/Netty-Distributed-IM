@@ -7,6 +7,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 import xin.ryven.project.common.spring.RedisProps;
 
+import java.util.Set;
+
 /**
  * @author gray
  */
@@ -27,38 +29,56 @@ public class RedisClient {
     }
 
     public boolean set(String key, String value) {
-        try (Jedis jedis = jedisPool.getResource()){
+        try (Jedis jedis = jedisPool.getResource()) {
             return "OK".equals(jedis.set(key, value));
         }
     }
 
     public void del(String key) {
-        try (Jedis jedis = jedisPool.getResource()){
-             jedis.del(key);
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.del(key);
         }
     }
 
     public String get(String key) {
-        try (Jedis jedis = jedisPool.getResource()){
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.get(key);
         }
     }
 
     public String hget(String key, String field) {
-        try (Jedis jedis = jedisPool.getResource()){
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.hget(key, field);
         }
     }
 
     public void hset(String key, String field, String value) {
-        try (Jedis jedis = jedisPool.getResource()){
+        try (Jedis jedis = jedisPool.getResource()) {
             jedis.hset(key, field, value);
         }
     }
 
     public Long incr(String key) {
-        try (Jedis jedis = jedisPool.getResource()){
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.incr(key);
+        }
+    }
+
+    public void sadd(String key, String member) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.sadd(key, member);
+        }
+    }
+
+    public Set<String> smember(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.smembers(key);
+        }
+    }
+
+    public void srem(String key, String member) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.srem(key, member);
         }
     }
 }

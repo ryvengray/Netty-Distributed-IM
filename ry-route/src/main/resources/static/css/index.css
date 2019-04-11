@@ -14,7 +14,7 @@
     flex-direction: row;
     width: 800px;
     height: 500px;
-    background-color: #734aff;
+    background-color: #c7ccff;
     margin: 0 auto;
     position: relative;
 }
@@ -22,9 +22,9 @@
 .box-left {
     flex-grow: 3;
     height: 100%;
-    background-color: #952aff;
+    background-color: #92dfff;
     flex-direction: column;
-    padding: 10px 0;
+    padding-bottom: 10px;
 }
 
 .box-right {
@@ -36,6 +36,7 @@
     flex-grow: 1;
     overflow-y: scroll;
     padding: 8px 15px;
+    color: #cfd7cf;
 }
 
 .input-box textarea {
@@ -57,12 +58,12 @@
 }
 
 .msg .name {
-    color: #323539;
+    color: #095f8a;
     font-size: 14px;
 }
 
 .msg .content {
-    color: #222;
+    color: #0a628f;
     font-size: 14px;
     padding: 4px 15px;
 }
@@ -82,11 +83,11 @@
     height: 50px;
     line-height: 50px;
     text-align: center;
-    color: #e1e1e1;
+    color: #5f1be1;
 }
 
 .user-card.active {
-    background-color: #734aff;
+    background-color: #c7ccff;
 }
 
 @keyframes msg-fade-in {

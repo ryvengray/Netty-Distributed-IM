@@ -14,7 +14,6 @@ import xin.ryven.project.server.holder.NettyAttrHolder;
 import xin.ryven.project.server.holder.SocketHolder;
 import xin.ryven.project.server.init.RyServer;
 import xin.ryven.project.server.service.ChannelReadService;
-import xin.ryven.project.server.service.RouteService;
 
 /**
  * 处理登录的逻辑
