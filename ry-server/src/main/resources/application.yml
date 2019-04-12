@@ -9,8 +9,6 @@ server:
   im-port: 7689
   port: 8900
   heart-beat-time: 18000 # 单位 ms
-  servlet:
-    context-path: /server
 eureka:
   client:
     serviceUrl:

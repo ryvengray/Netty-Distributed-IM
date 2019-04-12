@@ -26,5 +26,9 @@
 
 > 2、启动 ry-server 服务, ry-user 服务, ry-route 服务 （gateway 可以忽略）
 
-也可以直接使用脚本 start-all.sh ，注意几个项目用到的端口不要被占用,
+也可以直接使用脚本 all-start.sh ，注意几个项目用到的端口不要被占用,
 如果出现异常不能访问，到logs下查看日志文件
+
+****
+- 添加IM服务器  `./server-add.sh <im-port> <http-port>` 如 `./server-add.sh 9001 10020`
+- 添加服务  `./jar-start.sh <server-name> <http-port>` 如 `./jar-start.sh ry-user 9999`

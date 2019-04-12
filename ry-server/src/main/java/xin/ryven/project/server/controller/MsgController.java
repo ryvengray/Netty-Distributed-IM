@@ -17,7 +17,7 @@ import javax.validation.Valid;
  * @author gray
  */
 @RestController
-@RequestMapping("msg")
+@RequestMapping("server/msg")
 public class MsgController {
 
     private final RyServer server;
