@@ -12,3 +12,14 @@ spring:
     port: 6379
     password: jredis123456
     database: 1
+# Actuator 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always

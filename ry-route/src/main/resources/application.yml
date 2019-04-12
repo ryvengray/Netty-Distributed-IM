@@ -5,8 +5,6 @@ zk:
     root: /im-server
 server:
   port: 8888
-  servlet:
-    context-path: /route
 eureka:
   client:
     serviceUrl:
@@ -23,3 +21,18 @@ spring:
     port: 6379
     password: jredis123456
     database: 1
+  security:
+    user:
+      name: dev
+      password: dev*()
+# Actuator 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always

@@ -21,6 +21,7 @@ import java.util.List;
  * @author gray
  */
 @RestController
+@RequestMapping("route")
 @Slf4j
 public class RouteController {
 

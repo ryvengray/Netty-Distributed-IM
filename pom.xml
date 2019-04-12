@@ -16,6 +16,7 @@
         <module>ry-eureka</module>
         <module>ry-gateway</module>
         <module>ry-user</module>
+        <module>ry-admin</module>
     </modules>
 
     <properties>
@@ -29,6 +30,7 @@
         <netty.version>4.1.22.Final</netty.version>
         <fastjson.version>1.2.38</fastjson.version>
         <hibernate.validator.version>5.3.5.Final</hibernate.validator.version>
+        <spring.boot.admin.version>2.0.6</spring.boot.admin.version>
     </properties>
 
     <parent>
@@ -75,6 +77,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${spring.boot.admin.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>

@@ -8,3 +8,14 @@ spring:
         uri: http://localhost:8888
         predicates:
         - Path=/route/**
+# Actuator 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
