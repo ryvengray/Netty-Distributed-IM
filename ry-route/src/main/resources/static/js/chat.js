@@ -69,8 +69,8 @@ Vue.component('msg', {
 })
 
 Vue.component('user-card', {
-    props: ['username', 'userId', 'active'],
-    template: '<div class="user-card" v-bind:class="{active:active}">{{ username }}</div>'
+    props: ['username', 'userId', 'active', 'unread'],
+    template: '<div class="user-card" v-bind:class="{active:active}">{{ username }}<span class="unread" v-if="unread > 0">{{ unread }}</span></div>'
 })
 
 let vue = new Vue({
@@ -93,6 +93,7 @@ let vue = new Vue({
                 window.location.href = "login.html"
             } else {
                 this.user = JSON.parse(u)
+                document.title = this.user.username + '-Chat'
                 this.getServerAndConnect()
                 //获取用户列表
                 this.getOnlineUsers();
@@ -114,6 +115,7 @@ let vue = new Vue({
                     content: msg,
                     type: TYPE_MSG
                 }
+                console.log(msgData)
                 axios.post(sendMsgUrl, msgData)
                     .then(function (res) {
                         if (res.status === 200) {
@@ -121,9 +123,11 @@ let vue = new Vue({
                             if (data.code === 0) {
                                 //socket 连接
                                 let messages = vue.messages
-                                messages.push({'username': vue.user.username, 'msg': msg, 'me': true})
+                                let saveMsg = {'username': vue.user.username, 'msg': msg, 'me': true}
+                                messages.push(saveMsg)
                                 vue.messages = messages
                                 vue.sendMsg = ''
+                                saveMessage(vue.chatUser.userId, saveMsg)
                             } else {
                                 alert(data.msg)
                             }
@@ -169,10 +173,27 @@ let vue = new Vue({
                     }
                     break
                 case TYPE_MSG:
-                    let toUser = data.toUserId
-                    let messages = vue.messages
-                    messages.push({'username': data.username, 'msg': data.content})
-                    vue.messages = messages
+                    let fromUser = data.userId
+                    //判断是否是当前用户
+                    let msg = {'username': data.username, 'msg': data.content}
+                    if (vue.chatUser.userId === fromUser) {
+                        let messages = vue.messages
+                        messages.push(msg)
+                        vue.messages = messages
+                        //全局
+                        saveMessage(fromUser, msg)
+                    } else {
+                        saveMessage(fromUser, msg)
+                        //未读数
+                        let users = vue.users
+                        for (let i in users) {
+                            if (users[i].userId === fromUser) {
+                                users[i].unread = users[i].unread + 1
+                                break
+                            }
+                        }
+                        vue.users = users
+                    }
                 default:
             }
         },
@@ -183,11 +204,23 @@ let vue = new Vue({
                         var data = res.data
                         if (data.code === 0) {
                             let users = data.data
-                            if (users.length > 0) {
-                                users[0].active = true
-                                vue.chatUser = users[0]
+                            var setActive = false
+                            let me = vue.user
+                            let displayUsers = []
+                            for (let i in users) {
+                                let u = users[i]
+                                if (me.userId === u.userId) {
+                                    continue
+                                }
+                                if (!setActive) {
+                                    u.active = true
+                                    vue.chatUser = u
+                                    setActive = true
+                                }
+                                u['unread'] = 0
+                                displayUsers.push(u)
                             }
-                            vue.users = users
+                            vue.users = displayUsers
                         } else {
                             alert(data.msg)
                         }
@@ -199,7 +232,39 @@ let vue = new Vue({
                     console.log(reason)
                     alert('服务器错误')
                 })
+        },
+        userClick(ele) {
+            let users = vue.users
+            var change = false
+            for (let i in users) {
+                let user = users[i]
+                if (user.userId === ele) {
+                    if (!user.active) {
+                        user.active = true
+                        user.unread = 0
+                        //重载消息
+                        vue.messages = allMessages[ele] || []
+                        console.log( allMessages[ele])
+                        change = true
+                        vue.chatUser = user
+                    }
+                } else {
+                    user.active = false
+                }
+            }
+            if (change) {
+                vue.users = users
+                vue.$forceUpdate()
+            }
         }
     }
 })
+
+function saveMessage(userId, msg) {
+    if (allMessages[userId]) {
+        allMessages[userId].push(msg)
+    } else {
+        allMessages[userId] = [msg]
+    }
+}
 

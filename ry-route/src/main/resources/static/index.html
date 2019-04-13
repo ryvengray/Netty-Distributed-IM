@@ -13,7 +13,9 @@
             <user-card v-for="(item, key) in users"
                 v-bind:userId="item.userId"
                 v-bind:username="item.username"
-                v-bind:active="item.active">
+                v-bind:unread="item.unread"
+                v-bind:active="item.active"
+                       @click.native="userClick(item.userId)">
             </user-card>
         </div>
         <div class="box-right flex">

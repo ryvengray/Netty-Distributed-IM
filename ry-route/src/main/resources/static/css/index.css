@@ -84,6 +84,20 @@
     line-height: 50px;
     text-align: center;
     color: #5f1be1;
+    position: relative;
+}
+
+.user-card span.unread {
+    position: absolute;
+    right: 9px;
+    top: 6px;
+    height: initial;
+    line-height: initial;
+    font-size: 11px;
+    border-radius: 100%;
+    color: #e1e1e1;
+    background: #e13855;
+    padding: 1px 4px;
 }
 
 .user-card.active {
