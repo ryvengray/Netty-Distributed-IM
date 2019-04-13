@@ -3,7 +3,7 @@ ROUTE_PORT=9412
 mvn clean install -DskipTests
 rc=$?
 if [[ ${rc} -ne 0 ]] ; then
-    print "[FAIL] maven package error"
+    echo "[FAIL] maven package error"
     exit ${rc}
 fi
  kill
