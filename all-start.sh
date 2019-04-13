@@ -7,17 +7,11 @@ if [[ ${rc} -ne 0 ]] ; then
     exit ${rc}
 fi
  kill
-all_ports=`ps -ef|grep 'java -jar ry-'|grep 'server.port'| awk '{print $11}'|awk -F= '{print $2}'`
-for var in ${all_ports}
-do
-    curl -X POST http://localhost:${var}/actuator/shutdown
-    sleep 1
-done
-# 如果没有清楚干净，使用kill
+# 使用kill -15 优雅关闭
 all_pid=`ps -ef|grep 'java -jar ry-'|grep 'server.port'| awk '{print $2}'`
 for var in ${all_pid}
 do
-    kill -9 ${var}
+    kill -15 ${var}
 done
 all_pid=`ps -ef|grep 'java -jar ry-'|grep 'server.port'| awk '{print $2}'`
 echo 'Rest Pid: '${all_pid}

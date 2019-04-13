@@ -12,6 +12,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ import java.net.InetSocketAddress;
  */
 @Component
 @Slf4j
-public class RyServer {
+public class RyServer implements DisposableBean {
 
     @Value("${server.im-port}")
     private int imPort;
@@ -116,4 +117,10 @@ public class RyServer {
         SocketHolder.remove(channel);
     }
 
+    @Override
+    public void destroy() {
+        log.info("关闭服务...");
+        boss.shutdownGracefully();
+        work.shutdownGracefully();
+    }
 }
