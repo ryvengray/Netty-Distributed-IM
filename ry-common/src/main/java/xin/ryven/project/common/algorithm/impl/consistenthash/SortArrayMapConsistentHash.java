@@ -28,4 +28,9 @@ public class SortArrayMapConsistentHash extends AbstractConsistentHash {
     protected String getFirst(String value) {
         return sortArrayMap.getFirstNode(hash(value));
     }
+
+    @Override
+    protected void clear() {
+        this.sortArrayMap = new SortArrayMap();
+    }
 }

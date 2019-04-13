@@ -38,4 +38,9 @@ public class TreeMapConsistentHash extends AbstractConsistentHash {
             return tailMap.get(tailMap.firstKey());
         }
     }
+
+    @Override
+    protected void clear() {
+        this.treeMap.clear();
+    }
 }

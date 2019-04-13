@@ -32,6 +32,11 @@ public abstract class AbstractConsistentHash {
     protected abstract String getFirst(String value);
 
     /**
+     * 清空已有的数据
+     */
+    protected abstract void clear();
+
+    /**
      * 算法执行主流程
      *
      * @param strings 资源列表
@@ -39,6 +44,7 @@ public abstract class AbstractConsistentHash {
      * @return 算法结果
      */
     public String process(List<String> strings, String value) {
+        clear();
         strings.forEach(s -> this.add(hash(s), s));
         sort();
         return getFirst(value);

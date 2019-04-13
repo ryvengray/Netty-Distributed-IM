@@ -15,16 +15,15 @@ import xin.ryven.project.server.holder.NettyAttrHolder;
 @Slf4j
 public class HeartBeatServiceImpl implements HeartBeatService {
 
-    private final ApplicationProperties properties;
+    private final int heartBeatTime;
 
     @Autowired
     public HeartBeatServiceImpl(ApplicationProperties properties) {
-        this.properties = properties;
+        this.heartBeatTime = properties.getHeartBeatTime();
     }
 
     @Override
     public void process(ChannelHandlerContext ctx) {
-        int heartBeatTime = properties.getHeartBeatTime();
         long lastReadTime = NettyAttrHolder.getReadTime(ctx);
         if (System.currentTimeMillis() - lastReadTime > heartBeatTime) {
             log.info("{} heart beat timeout, shutdown", NettyAttrHolder.getUser(ctx));

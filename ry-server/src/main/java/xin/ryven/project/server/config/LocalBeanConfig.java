@@ -32,9 +32,4 @@ public class LocalBeanConfig {
         return new RestTemplate();
     }
 
-    @Bean
-    public RedisClient redisClient(RedisProps redisProps) {
-        return new RedisClient(redisProps);
-    }
-
 }
