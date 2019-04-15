@@ -1,31 +1,4 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://127.0.0.1:8768/eureka/
-    registry-fetch-interval-seconds: 8
-  instance:
-    metadata-map:
-      user.name: ryadmin
-      user.password: ryadmin
-    prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 10
-server:
-  port: 8101
-# Actuator 监控
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    shutdown:
-      enabled: true
-    health:
-      show-details: always
 spring:
-  profiles:
-    active: secure
-  security:
-    user:
-      name: ryadmin
-      password: ryadmin
+  cloud:
+    config:
+      profile: dev

@@ -1,38 +1,6 @@
-zk:
-  address: localhost:2181
-  connect-timeout: 10000
-  client:
-    root: /im-server
 server:
   port: 8888
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://127.0.0.1:8768/eureka/
-# 设置服务的timeout时间
-ribbon:
-  ReadTimeout: 5000
-url:
-  msg:
-    send: /server/msg/send
 spring:
-  redis:
-    host: localhost
-    port: 6379
-    password: jredis123456
-    database: 1
-  security:
-    user:
-      name: dev
-      password: dev*()
-# Actuator 监控
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    shutdown:
-      enabled: true
-    health:
-      show-details: always
+  cloud:
+    config:
+      profile: dev

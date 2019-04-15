@@ -1,6 +1,6 @@
 spring:
   application:
-    name: im-admin
+    name: im-gateway
   cloud:
     config:
       discovery:
@@ -8,7 +8,7 @@ spring:
         service-id: config-server
       label: master
       # 配置文件名称，profile在application.yml中
-      name: admin, common
+      name: gateway, common
 # 配置Eureka地址
 eureka:
   client:

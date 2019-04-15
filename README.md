@@ -24,7 +24,9 @@
 
 > 1、启动 ry-eureka 服务
 
-> 2、启动 ry-server 服务, ry-user 服务, ry-route 服务 （gateway 可以忽略）
+> 2、启动配置中心 ry-config-server 服务
+
+> 3、启动 ry-server 服务, ry-user 服务, ry-route 服务 （gateway 可以忽略）
 
 也可以直接使用脚本 all-start.sh ，注意几个项目用到的端口不要被占用,
 如果出现异常不能访问，到logs下查看日志文件

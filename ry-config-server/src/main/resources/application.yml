@@ -1,0 +1,16 @@
+server:
+  port: 9510
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          search-paths: /**
+          uri: https://gitee.com/ryven/chat-config.git
+      label: master
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8768/eureka/

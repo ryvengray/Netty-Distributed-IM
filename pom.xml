@@ -11,12 +11,12 @@
     <modules>
         <module>ry-server</module>
         <module>ry-common</module>
-        <module>ry-client</module>
         <module>ry-route</module>
         <module>ry-eureka</module>
         <module>ry-gateway</module>
         <module>ry-user</module>
         <module>ry-admin</module>
+        <module>ry-config-server</module>
     </modules>
 
     <properties>

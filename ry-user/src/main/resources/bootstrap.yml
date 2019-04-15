@@ -1,3 +1,16 @@
 spring:
   application:
     name: im-user
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      label: master
+      # 配置文件名称，profile在application.yml中
+      name: user, common
+# 配置Eureka地址
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8768/eureka/
