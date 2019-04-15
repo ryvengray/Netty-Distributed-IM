@@ -7,8 +7,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.util.StringUtils;
 import xin.ryven.project.common.spring.SpringBeanUtils;
+import xin.ryven.project.common.vo.ServerAddress;
 import xin.ryven.project.server.config.ApplicationProperties;
 import xin.ryven.project.server.zk.ZkRegistryWorker;
 
@@ -31,9 +34,21 @@ public class ServerApplication implements CommandLineRunner {
         SpringApplication.run(ServerApplication.class, args);
     }
 
+    @Bean
+    public ServerAddress serverAddress(ApplicationProperties properties) {
+        ServerAddress serverAddress = ServerAddress.builder()
+                .host(properties.getServerHost())
+                .port(properties.getServerImPort())
+                .httpPort(properties.getServerPort()).build();
+        if (StringUtils.isEmpty(serverAddress.getHost())) {
+            serverAddress.setDynamicHost();
+        }
+        return serverAddress;
+    }
+
     @Override
     public void run(String... args) {
-        ApplicationProperties applicationProperties = SpringBeanUtils.getBean(ApplicationProperties.class);
+        ServerAddress serverAddress = SpringBeanUtils.getBean(ServerAddress.class);
         log.info("Start registry");
         //启动zk注册临时节点
         ExecutorService singleExecutorService = new ThreadPoolExecutor(1,
@@ -42,10 +57,7 @@ public class ServerApplication implements CommandLineRunner {
                 TimeUnit.SECONDS,
                 new SynchronousQueue<>(),
                 new ThreadFactoryBuilder().setNameFormat("Registry-Worker-%d").build());
-        singleExecutorService.submit(new ZkRegistryWorker(
-                applicationProperties.getServerHost(),
-                applicationProperties.getServerImPort(),
-                applicationProperties.getServerPort()));
+        singleExecutorService.submit(new ZkRegistryWorker(serverAddress));
         log.info("End registry");
     }
 }

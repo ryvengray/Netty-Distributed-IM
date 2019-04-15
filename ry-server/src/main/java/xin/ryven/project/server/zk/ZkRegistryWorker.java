@@ -2,6 +2,7 @@ package xin.ryven.project.server.zk;
 
 import lombok.extern.slf4j.Slf4j;
 import xin.ryven.project.common.spring.SpringBeanUtils;
+import xin.ryven.project.common.vo.ServerAddress;
 import xin.ryven.project.server.config.ApplicationProperties;
 
 /**
@@ -20,10 +21,10 @@ public class ZkRegistryWorker implements Runnable {
 
     private ApplicationProperties applicationProperties;
 
-    public ZkRegistryWorker(String host, Integer socketPort, Integer httpPort) {
-        this.host = host;
-        this.socketPort = socketPort;
-        this.httpPort = httpPort;
+    public ZkRegistryWorker(ServerAddress serverAddress) {
+        this.host = serverAddress.getHost();
+        this.socketPort = serverAddress.getPort();
+        this.httpPort = serverAddress.getHttpPort();
         this.ryZkClient = SpringBeanUtils.getBean(RyZkClient.class);
         this.applicationProperties = SpringBeanUtils.getBean(ApplicationProperties.class);
     }

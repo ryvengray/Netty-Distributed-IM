@@ -23,7 +23,7 @@ public class ApplicationProperties {
     @Value("${zk.client.registry}")
     private Boolean registry;
 
-    @Value("${server.host}")
+    @Value("${server.host:}")
     private String serverHost;
 
     @Value("${server.im-port}")

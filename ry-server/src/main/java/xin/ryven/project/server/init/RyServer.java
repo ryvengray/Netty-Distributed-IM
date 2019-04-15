@@ -46,12 +46,9 @@ public class RyServer implements DisposableBean {
     private final ServerAddress serverAddress;
 
     @Autowired
-    public RyServer(RouteService routeService, ApplicationProperties properties) {
+    public RyServer(RouteService routeService, ServerAddress serverAddress) {
         this.routeService = routeService;
-        this.serverAddress = ServerAddress.builder()
-                .host(properties.getServerHost())
-                .port(properties.getServerImPort())
-                .httpPort(properties.getServerPort()).build();
+        this.serverAddress = serverAddress;
     }
 
     @PostConstruct

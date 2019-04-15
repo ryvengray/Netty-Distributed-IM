@@ -5,7 +5,6 @@ zk:
     registry: true
     root: /im-server
 server:
-  host: 127.0.0.1
   im-port: 7689
   port: 8900
   heart-beat-time: 18000 # 单位 ms
