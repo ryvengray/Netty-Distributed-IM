@@ -18,6 +18,9 @@ echo 'Rest Pid: '${all_pid}
 ./jar-start.sh ry-eureka 8768
 echo '启动 Ry-Eureka...'
 sleep 3
+./jar-start.sh ry-config-server 9501
+echo '启动 Ry-Config-Server...'
+sleep 10
 ./jar-start.sh ry-user 9411
 echo '启动 Ry-User...'
 ./server-add.sh 10010 9418 'n'
