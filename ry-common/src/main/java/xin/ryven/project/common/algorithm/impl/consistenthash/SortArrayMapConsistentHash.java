@@ -31,6 +31,6 @@ public class SortArrayMapConsistentHash extends AbstractConsistentHash {
 
     @Override
     protected void clear() {
-        this.sortArrayMap = new SortArrayMap();
+        sortArrayMap.clear();
     }
 }

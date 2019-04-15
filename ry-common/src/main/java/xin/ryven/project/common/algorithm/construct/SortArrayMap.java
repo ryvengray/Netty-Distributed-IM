@@ -3,7 +3,9 @@ package xin.ryven.project.common.algorithm.construct;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * Function:根据 key 排序的 Map
@@ -55,6 +57,11 @@ public class SortArrayMap {
             }
         }
         return buckets[0].value;
+    }
+
+    public void clear() {
+        IntStream.range(0, this.buckets.length).forEach(i -> this.buckets[i] = null);
+        this.size = 0;
     }
 
     @ToString

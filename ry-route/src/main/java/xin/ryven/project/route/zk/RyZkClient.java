@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import xin.ryven.project.route.cache.ServerCache;
 import xin.ryven.project.route.config.ApplicationProperties;
+import xin.ryven.project.route.service.RouteService;
 
 import java.util.List;
 
@@ -18,20 +18,25 @@ public class RyZkClient {
 
     private final ZkClient zkClient;
     private final ApplicationProperties applicationProperties;
-    private final ServerCache serverCache;
+    private final RouteService routeService;
 
     @Autowired
-    public RyZkClient(ZkClient zkClient, ApplicationProperties applicationProperties, ServerCache serverCache) {
+    public RyZkClient(ZkClient zkClient, ApplicationProperties applicationProperties, RouteService routeService) {
         this.zkClient = zkClient;
         this.applicationProperties = applicationProperties;
-        this.serverCache = serverCache;
+        this.routeService = routeService;
     }
 
     public void subscribe(String path) {
         zkClient.subscribeChildChanges(path, (s, list) -> {
             log.info("Server list change. Path: 【{}】, children: 【{}】", s, list);
-            serverCache.updateCache(list);
+            routeService.refreshServers(list);
         });
+    }
+
+    public void initServers(){
+        List<String> allNode = getAllNode();
+        routeService.refreshServers(allNode);
     }
 
     public List<String> getAllNode() {

@@ -20,6 +20,13 @@ public interface RouteService {
     String routeServer(String value);
 
     /**
+     * 更新服务器地址列表
+     *
+     * @param servers 服务器地址列表
+     */
+    void refreshServers(List<String> servers);
+
+    /**
      * 发送消息
      *
      * @param msgVo 消息实体

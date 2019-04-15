@@ -32,22 +32,29 @@ public abstract class AbstractConsistentHash {
     protected abstract String getFirst(String value);
 
     /**
-     * 清空已有的数据
+     * 清空列表的内容
      */
     protected abstract void clear();
 
     /**
      * 算法执行主流程
      *
-     * @param strings 资源列表
-     * @param value   待计算的value
+     * @param value 待计算的value
      * @return 算法结果
      */
-    public String process(List<String> strings, String value) {
-        clear();
-        strings.forEach(s -> this.add(hash(s), s));
-        sort();
+    public String process(String value) {
         return getFirst(value);
+    }
+
+    /**
+     * 更新已有的数据列表，并进行排序
+     *
+     * @param list 数据列表
+     */
+    public void refreshList(List<String> list) {
+        this.clear();
+        list.forEach(s -> add(hash(s), s));
+        sort();
     }
 
     /**

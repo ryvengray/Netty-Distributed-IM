@@ -16,8 +16,12 @@ public class ConsistentHashHandler implements RouteHandler {
     }
 
     @Override
-    public String route(List<String> strings, String string) {
-        return this.consistentHash.process(strings, string);
+    public String route(String string) {
+        return this.consistentHash.process(string);
     }
 
+    @Override
+    public void refreshList(List<String> values) {
+        consistentHash.refreshList(values);
+    }
 }

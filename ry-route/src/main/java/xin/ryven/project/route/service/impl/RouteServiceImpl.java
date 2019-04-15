@@ -16,7 +16,6 @@ import xin.ryven.project.common.exception.MsgServerException;
 import xin.ryven.project.common.http.Resp;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.common.vo.ServerAddress;
-import xin.ryven.project.route.cache.ServerCache;
 import xin.ryven.project.route.service.RouteService;
 import xin.ryven.project.route.tools.ServerMsgUtils;
 
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 public class RouteServiceImpl implements RouteService {
 
     private final RouteHandler routeHandler;
-    private final ServerCache serverCache;
     private final RedisClient redisClient;
     private final ServerMsgUtils serverMsg;
 
@@ -46,17 +44,28 @@ public class RouteServiceImpl implements RouteService {
     private LruCache<Integer, User> localCache = new LruCache<>(1 << 6);
 
     @Autowired
-    public RouteServiceImpl(RouteHandler routeHandler, ServerCache serverCache, RedisClient redisClient, ServerMsgUtils serverMsg) {
+    public RouteServiceImpl(RouteHandler routeHandler, RedisClient redisClient, ServerMsgUtils serverMsg) {
         this.routeHandler = routeHandler;
-        this.serverCache = serverCache;
         this.redisClient = redisClient;
         this.serverMsg = serverMsg;
     }
 
     @Override
     public String routeServer(String value) {
-        List<String> servers = serverCache.allServer();
-        return routeHandler.route(servers, value);
+        return routeHandler.route(value);
+    }
+
+    @Override
+    public void refreshServers(List<String> servers) {
+        //处理地址的前部分
+        String prefixSeparator = "-";
+        servers = servers.stream().map(s -> {
+            if (s.contains(prefixSeparator)) {
+                return s.split(prefixSeparator)[1];
+            }
+            return s;
+        }).collect(Collectors.toList());
+        routeHandler.refreshList(servers);
     }
 
     @Override

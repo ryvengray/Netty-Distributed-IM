@@ -11,10 +11,17 @@ public interface RouteHandler {
 
     /**
      * 根据路由算法，从列表中获取一个字符串
+     * ø
      *
-     * @param strings 数据
-     * @param string  需要负载的key
+     * @param string 需要负载的key
      * @return 数据中的负载结果
      */
-    String route(List<String> strings, String string);
+    String route(String string);
+
+    /**
+     * 更新服务列表
+     *
+     * @param values 服务列表
+     */
+    void refreshList(List<String> values);
 }
