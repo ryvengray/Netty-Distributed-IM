@@ -79,7 +79,8 @@ Vue.component('user-card', {
 let vue = new Vue({
     el: '#chat',
     data: {
-        users: [{username: '展示', userId: 1}, {username: 'Gray', userId: 1, active: true}],
+        // users: [{username: '展示', userId: 1}, {username: 'Gray', userId: 1, active: true}],
+        users: [],
         messages: [],
         sendMsg: '',
         notify: '',

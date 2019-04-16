@@ -4,6 +4,14 @@
     box-sizing: border-box;
 }
 
+.header {
+    text-align: center;
+}
+
+.header .highlight {
+    color: #0b76ac;
+}
+
 .flex {
     display: flex;
     display: -webkit-flex;
