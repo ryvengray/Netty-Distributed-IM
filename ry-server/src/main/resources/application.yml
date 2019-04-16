@@ -4,3 +4,4 @@ spring:
       profile: dev
 server:
   port: 9077
+  im-port: 10234
