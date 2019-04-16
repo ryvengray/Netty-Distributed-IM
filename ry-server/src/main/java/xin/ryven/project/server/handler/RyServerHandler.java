@@ -12,8 +12,10 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpStatus;
 import xin.ryven.project.common.enums.MsgType;
+import xin.ryven.project.common.service.HeartBeatService;
 import xin.ryven.project.common.spring.SpringBeanUtils;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.server.holder.ChannelReadHolder;
@@ -32,7 +34,7 @@ public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         log.info("{} offline", NettyAttrHolder.getUser(ctx));
-            //下线
+        //下线
         SpringBeanUtils.getBean(RyServer.class).offline((NioSocketChannel) ctx.channel());
     }
 
@@ -41,7 +43,8 @@ public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
         IdleStateEvent event = (IdleStateEvent) evt;
         if (event.state() == IdleState.READER_IDLE) {
             //空闲未读取到消息
-            log.info("{} read idle event triggered", NettyAttrHolder.getUser(ctx));
+            HeartBeatService heartBeatService = SpringBeanUtils.getBean(HeartBeatService.class);
+            heartBeatService.process(ctx);
         }
     }
 
@@ -66,7 +69,8 @@ public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
 
     /**
      * 处理websocket消息
-     * @param ctx ctx
+     *
+     * @param ctx            ctx
      * @param webSocketFrame webSocketFrame
      */
     private void handleWebSocketMessage(ChannelHandlerContext ctx, WebSocketFrame webSocketFrame) {
@@ -78,6 +82,9 @@ public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
             //Ping消息
             ctx.channel().write(new PongWebSocketFrame(webSocketFrame.content().retain()));
             log.info("{} Pong", NettyAttrHolder.getUser(ctx));
+        } else if (webSocketFrame instanceof PongWebSocketFrame) {
+            //ping客户端的返回pong
+            NettyAttrHolder.updateReadTime(ctx);
         } else if (!(webSocketFrame instanceof TextWebSocketFrame)) {
             log.warn("不支持的消息 {}", webSocketFrame.content().toString(CharsetUtil.UTF_8));
             throw new UnsupportedOperationException("不支持 TextWebSocketFrame 以外的内容");
@@ -112,7 +119,7 @@ public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
         //正常的请求，构建握手
         WebSocketServerHandshakerFactory wsf = new WebSocketServerHandshakerFactory("ws://" + request.headers().get(HttpHeaderNames.HOST), null, false);
         WebSocketServerHandshaker handShaker = wsf.newHandshaker(request);
-        if (handShaker ==null) {
+        if (handShaker == null) {
             //无法处理的 websocket 版本
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {

@@ -1,6 +1,8 @@
 package xin.ryven.project.server.service.impl;
 
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,13 @@ public class HeartBeatServiceImpl implements HeartBeatService {
         if (System.currentTimeMillis() - lastReadTime > heartBeatTime) {
             log.info("{} heart beat timeout, shutdown", NettyAttrHolder.getUser(ctx));
             ctx.channel().close();
+        } else {
+            ctx.writeAndFlush(new PingWebSocketFrame()).addListener((ChannelFutureListener) f -> {
+                if (!f.isSuccess()) {
+                    log.warn("Send ping to {} failed, close channel", NettyAttrHolder.getUser(ctx));
+                    ctx.close();
+                }
+            });
         }
     }
 

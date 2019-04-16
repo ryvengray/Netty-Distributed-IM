@@ -63,7 +63,7 @@ public class RyServer implements DisposableBean {
                     protected void initChannel(NioSocketChannel ch) {
                         ch.pipeline()
                                 // 空闲心跳检测
-                                .addLast(new IdleStateHandler(30, 0, 0))
+                                .addLast(new IdleStateHandler(20, 0, 0))
                                 .addLast("http-codec", new HttpServerCodec())
                                 .addLast("aggregator", new HttpObjectAggregator(65536))
                                 .addLast("http-chunked", new ChunkedWriteHandler())

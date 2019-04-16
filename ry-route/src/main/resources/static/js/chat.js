@@ -51,6 +51,9 @@ class IMWebSocket {
 
     static onClose(evt) {
         console.log('Close', evt)
+        //重新连接
+        vue.notify = '连接断开，重新连接中'
+        vue.getServerAndConnect()
     }
 
     static onError(evt) {
