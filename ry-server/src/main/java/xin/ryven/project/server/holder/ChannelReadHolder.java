@@ -1,6 +1,7 @@
 package xin.ryven.project.server.holder;
 
 import xin.ryven.project.common.enums.MsgType;
+import xin.ryven.project.common.spring.SpringBeanUtils;
 import xin.ryven.project.server.service.ChannelReadService;
 import xin.ryven.project.server.service.impl.LoginChannelReadServiceImpl;
 import xin.ryven.project.server.service.impl.PingChannelReadServiceImpl;
@@ -18,8 +19,7 @@ public class ChannelReadHolder {
     private static Map<MsgType, ChannelReadService> channelReadServiceMap =
             new HashMap<MsgType, ChannelReadService>() {
                 {
-                    put(MsgType.LOGIN, new LoginChannelReadServiceImpl());
-                    put(MsgType.PING, new PingChannelReadServiceImpl());
+                    put(MsgType.LOGIN, SpringBeanUtils.getBean(LoginChannelReadServiceImpl.class));
                 }
             };
 

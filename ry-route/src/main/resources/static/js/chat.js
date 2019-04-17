@@ -28,6 +28,7 @@ class IMWebSocket {
     }
 
     static onMessage(evt) {
+        console.log(evt.data)
         if (evt.type === 'message') {
             let msg = evt.data
             //解析消息

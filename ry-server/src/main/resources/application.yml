@@ -5,3 +5,10 @@ spring:
 server:
   port: 9077
   im-port: 10234
+
+rabbitmq:
+  addresses: localhost
+  port: 5672
+  username: guest
+  password: guest
+  exchange: login-out-exchange

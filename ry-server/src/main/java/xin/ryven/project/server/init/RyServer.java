@@ -28,6 +28,7 @@ import xin.ryven.project.server.feigns.RouteService;
 
 import javax.annotation.PostConstruct;
 import java.net.InetSocketAddress;
+import java.util.Collection;
 
 /**
  * @author gray
@@ -90,6 +91,16 @@ public class RyServer implements DisposableBean {
                         toChannel.close();
                     }
                 });
+    }
+
+    /**
+     * 用户的上线下线通知所有的客户端
+     *
+     * @param jsonMessage 通知的消息，字符串格式
+     */
+    public void notifyAll(String jsonMessage) {
+        Collection<NioSocketChannel> nioSocketChannels = SocketHolder.allChannels();
+        nioSocketChannels.forEach(c -> c.writeAndFlush(new TextWebSocketFrame(jsonMessage)));
     }
 
     /**

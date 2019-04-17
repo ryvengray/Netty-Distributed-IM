@@ -15,7 +15,9 @@ public enum MsgType {
     LOGIN(1),
     MESSAGE(2),
     PING(3),
-    PONG(4);
+    PONG(4),
+    NOTIFY_LOGIN(10),
+    NOTIFY_LOGOUT(11);
 
     int type;
 

@@ -34,4 +34,19 @@ public class ApplicationProperties {
 
     @Value("${server.heart-beat-time}")
     private Integer heartBeatTime;
+
+    @Value("${rabbitmq.username}")
+    private String mqUsername;
+
+    @Value("${rabbitmq.password}")
+    private String mqPassword;
+
+    @Value("${rabbitmq.addresses}")
+    private String mqAddresses;
+
+    @Value("${rabbitmq.port:5672}")
+    private Integer port;
+
+    @Value("${rabbitmq.exchange}")
+    private String mqExchange;
 }
