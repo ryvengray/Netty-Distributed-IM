@@ -30,15 +30,10 @@ import xin.ryven.project.server.service.ChannelReadService;
 public class LoginChannelReadServiceImpl implements ChannelReadService {
 
     private final RyServer ryServer;
-    private final AmqpTemplate amqpTemplate;
-
-    private String exchange;
 
     @Autowired
-    public LoginChannelReadServiceImpl(RyServer ryServer, AmqpTemplate amqpTemplate, ApplicationProperties properties) {
+    public LoginChannelReadServiceImpl(RyServer ryServer) {
         this.ryServer = ryServer;
-        this.amqpTemplate = amqpTemplate;
-        this.exchange = properties.getMqExchange();
     }
 
     @Override
@@ -66,10 +61,7 @@ public class LoginChannelReadServiceImpl implements ChannelReadService {
                     }
                 });
         //保存用户信息
-        ryServer.online(userId);
-        //通知所有的用户
-        MsgVo loginMsg = MsgVo.builder().type(MsgType.NOTIFY_LOGIN.getType()).userId(userId).username(msgVo.getUsername()).build();
-        amqpTemplate.convertAndSend(exchange, "", JSON.toJSONString(loginMsg));
+        ryServer.online(msgVo);
     }
 
 }

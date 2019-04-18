@@ -4,3 +4,8 @@ spring:
   cloud:
     config:
       profile: dev
+  rabbitmq:
+    addresses: localhost
+    port: 5672
+    username: guest
+    password: guest

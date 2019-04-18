@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="chat">
-    <h3 class="header">{{notify}}(当前在线 <span class="highlight">{{users.length}}</span> 人)</h3>
+    <h3 class="header">{{notify}}(当前在线 <span class="highlight">{{users.length + 1}}</span> 人)</h3>
     <div class="box flex">
         <div class="box-left flex">
             <user-card v-for="(item, key) in users"

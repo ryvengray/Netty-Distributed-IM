@@ -14,6 +14,7 @@ public enum Status {
      */
     OK(0, "Success"),
     UN_LOGIN(1, "Not logged in"),
+    SERVER_BREAK(10, "Http request failed"),
     FAILED(65, "Failed");
 
 

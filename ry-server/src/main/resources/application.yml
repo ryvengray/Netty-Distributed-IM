@@ -11,4 +11,4 @@ rabbitmq:
   port: 5672
   username: guest
   password: guest
-  exchange: login-out-exchange
+  exchange: login.out.exchange

@@ -1,6 +1,9 @@
 package xin.ryven.project.server.zk;
 
+import lombok.extern.slf4j.Slf4j;
+import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
+import org.apache.zookeeper.Watcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xin.ryven.project.server.config.ApplicationProperties;
@@ -9,6 +12,7 @@ import xin.ryven.project.server.config.ApplicationProperties;
  * @author gray
  */
 @Component
+@Slf4j
 public class RyZkClient {
 
     private final ZkClient zkClient;
@@ -32,5 +36,19 @@ public class RyZkClient {
 
     public void createEphemeralNode(String path) {
         zkClient.createEphemeral(path);
+        zkClient.subscribeStateChanges(new IZkStateListener() {
+            @Override
+            public void handleStateChanged(Watcher.Event.KeeperState keeperState) {
+            }
+
+            @Override
+            public void handleNewSession() {
+                zkClient.createEphemeral(path);
+            }
+
+            @Override
+            public void handleSessionEstablishmentError(Throwable throwable) {
+            }
+        });
     }
 }

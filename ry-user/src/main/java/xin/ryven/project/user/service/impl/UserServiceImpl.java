@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(User user) {
+    public User login(User user) throws UserException {
         if (StringUtils.isEmpty(user.getUsername())) {
             throw new UserException("User name can't be null");
         }
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(User user) {
+    public void register(User user) throws UserException {
         String userStr = redisClient.hget(RedisConstant.USER_NAME_POOL, user.getUsername());
         if (!StringUtils.isEmpty(userStr)) {
             log.info("用户已经注册 {}", userStr);

@@ -92,16 +92,4 @@ public class RouteController {
         }
     }
 
-    @PostMapping("user/saveServer")
-    public Resp userServerSave(@RequestBody SaveUserServer saveUserServer) {
-        routeService.saveUserChannel(saveUserServer.getUserId(), saveUserServer.getServerAddress());
-        return Resp.status(Status.OK);
-    }
-
-    @PostMapping("user/offline")
-    public Resp userOffline(@RequestBody User user) {
-        routeService.offline(user.getUserId());
-        return Resp.status(Status.OK);
-    }
-
 }

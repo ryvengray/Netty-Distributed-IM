@@ -12,11 +12,15 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import xin.ryven.project.common.entity.User;
+import xin.ryven.project.common.enums.MsgType;
+import xin.ryven.project.common.service.HeartBeatService;
+import xin.ryven.project.common.spring.SpringBeanUtils;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.common.vo.ServerAddress;
 import xin.ryven.project.common.vo.feign.SaveUserServer;
@@ -24,7 +28,6 @@ import xin.ryven.project.server.config.ApplicationProperties;
 import xin.ryven.project.server.handler.RyServerHandler;
 import xin.ryven.project.server.holder.NettyAttrHolder;
 import xin.ryven.project.server.holder.SocketHolder;
-import xin.ryven.project.server.feigns.RouteService;
 
 import javax.annotation.PostConstruct;
 import java.net.InetSocketAddress;
@@ -43,13 +46,15 @@ public class RyServer implements DisposableBean {
     private EventLoopGroup boss = new NioEventLoopGroup();
     private EventLoopGroup work = new NioEventLoopGroup();
 
-    private final RouteService routeService;
     private final ServerAddress serverAddress;
+    private final AmqpTemplate amqpTemplate;
+    private final ApplicationProperties applicationProperties;
 
     @Autowired
-    public RyServer(RouteService routeService, ServerAddress serverAddress) {
-        this.routeService = routeService;
+    public RyServer(ServerAddress serverAddress, AmqpTemplate amqpTemplate, ApplicationProperties applicationProperties) {
         this.serverAddress = serverAddress;
+        this.amqpTemplate = amqpTemplate;
+        this.applicationProperties = applicationProperties;
     }
 
     @PostConstruct
@@ -69,7 +74,7 @@ public class RyServer implements DisposableBean {
                                 .addLast("aggregator", new HttpObjectAggregator(65536))
                                 .addLast("http-chunked", new ChunkedWriteHandler())
                                 // 服务端的Handler
-                                .addLast("handler", new RyServerHandler());
+                                .addLast("handler", new RyServerHandler(RyServer.this, SpringBeanUtils.getBean(HeartBeatService.class)));
                     }
                 });
         ChannelFuture future = b.bind().sync();
@@ -82,6 +87,8 @@ public class RyServer implements DisposableBean {
         NioSocketChannel toChannel = SocketHolder.channel(vo.getToUserId());
         if (toChannel == null) {
             log.warn("User offline, user id = {}", vo.getToUserId());
+            MsgVo logoutVo = MsgVo.builder().userId(vo.getToUserId()).username(vo.getToUsername()).type(MsgType.NOTIFY_LOGOUT.getType()).build();
+            amqpTemplate.convertAndSend(applicationProperties.getMqExchange(), "", JSON.toJSONString(logoutVo));
             throw new RuntimeException("用户已经下线");
         }
         toChannel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(vo)))
@@ -106,8 +113,12 @@ public class RyServer implements DisposableBean {
     /**
      * 上线
      */
-    public void online(Integer userId) {
-        routeService.saveUserChannel(new SaveUserServer(userId, serverAddress));
+    public void online(MsgVo msgVo) {
+        //需要route处理的内容
+        SaveUserServer saveUserServer = new SaveUserServer(msgVo.getUserId(), serverAddress);
+        msgVo.setContent(JSON.toJSONString(saveUserServer));
+        msgVo.setType(MsgType.NOTIFY_LOGIN.getType());
+        amqpTemplate.convertAndSend(applicationProperties.getMqExchange(), "", JSON.toJSONString(msgVo));
     }
 
     /**
@@ -119,7 +130,9 @@ public class RyServer implements DisposableBean {
     public void offline(NioSocketChannel channel) {
         User user = NettyAttrHolder.getUser(channel);
         if (user != null) {
-            routeService.offline(user);
+            MsgVo msgVo = MsgVo.builder().userId(user.getUserId())
+                    .username(user.getUsername()).type(MsgType.NOTIFY_LOGOUT.getType()).build();
+            amqpTemplate.convertAndSend(applicationProperties.getMqExchange(), "", JSON.toJSONString(msgVo));
         }
         channel.close();
         SocketHolder.remove(channel);
@@ -128,6 +141,7 @@ public class RyServer implements DisposableBean {
     @Override
     public void destroy() {
         log.info("关闭服务...");
+        //清空本服务器的在线用户
         boss.shutdownGracefully();
         work.shutdownGracefully();
     }

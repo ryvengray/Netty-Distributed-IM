@@ -1,5 +1,7 @@
 const TYPE_LOGIN = 1
 const TYPE_MSG = 2
+const TYPE_USER_LOGIN = 10
+const TYPE_USER_LOGOUT = 11
 
 let getServerUrl = '/route/serverAddress'
 let sendMsgUrl = '/route/msg/send'
@@ -28,13 +30,18 @@ class IMWebSocket {
     }
 
     static onMessage(evt) {
-        console.log(evt.data)
         if (evt.type === 'message') {
             let msg = evt.data
             //解析消息
             try {
                 let received = JSON.parse(msg)
-                vue.received(received)
+                if (received.type === TYPE_MSG) {
+                    vue.received(received)
+                } else if (received.type === TYPE_USER_LOGIN) {
+                    vue.userLoginMsg(received)
+                } else if (received.type === TYPE_USER_LOGOUT) {
+                    vue.userLogoutMsg(received)
+                }
             } catch (e) {
                 console.error(e)
             }
@@ -44,6 +51,8 @@ class IMWebSocket {
     }
 
     static onOpen(evt) {
+        vue.notify = '连接成功'
+        console.log('连接成功')
         let data = imWebSocket.user
         data.type = TYPE_LOGIN
         imWebSocket.send(data)
@@ -54,6 +63,7 @@ class IMWebSocket {
         console.log('Close', evt)
         //重新连接
         vue.notify = '连接断开，重新连接中'
+        console.log('连接断开，重新连接中')
         vue.getServerAndConnect()
     }
 
@@ -120,7 +130,6 @@ let vue = new Vue({
                     content: msg,
                     type: TYPE_MSG
                 }
-                console.log(msgData)
                 axios.post(sendMsgUrl, msgData)
                     .then(function (res) {
                         if (res.status === 200) {
@@ -172,11 +181,6 @@ let vue = new Vue({
         received(data) {
             //收到消息作出处理
             switch (data.type) {
-                case TYPE_LOGIN:
-                    if (data.content === 'OK') {
-                        this.notify = '连接成功'
-                    }
-                    break
                 case TYPE_MSG:
                     let fromUser = data.userId
                     //判断是否是当前用户
@@ -261,6 +265,40 @@ let vue = new Vue({
                 vue.users = users
                 vue.$forceUpdate()
             }
+        },
+        userLoginMsg(data) {
+            if (data.userId === vue.user.userId) {
+                return
+            }
+            let users = vue.users
+            //重复检查
+            for (let i in users) {
+                if (users[i].userId === data.userId) {
+                    return
+                }
+            }
+            data.unread = 0
+            data.active = false
+            users.push(data)
+            vue.users = users
+        },
+        userLogoutMsg(data) {
+            if (data.userId === vue.user.userId) {
+                return
+            }
+            let users = vue.users
+            //找到下标
+            var deleteIndex = -1
+            for (let i in users) {
+                if (users[i].userId === data.userId) {
+                    deleteIndex = i
+                    break
+                }
+            }
+            if (deleteIndex > -1) {
+                users.splice(deleteIndex, 1)
+            }
+            vue.users = users
         }
     }
 })

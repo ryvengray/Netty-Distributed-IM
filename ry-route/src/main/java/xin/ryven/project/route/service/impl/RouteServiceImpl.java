@@ -79,7 +79,11 @@ public class RouteServiceImpl implements RouteService {
         }
         ServerAddress addressVo = JSON.parseObject(addressStr, ServerAddress.class);
         Resp resp = serverMsg.sendMsg(addressVo, msgVo);
-        if (resp.getCode() != Status.OK.getCode()) {
+        if (resp.getCode() == Status.SERVER_BREAK.getCode()) {
+            //无法访问连接，直接下线
+            offline(toUserId);
+            throw new MsgServerException("对方已下线");
+        } else if (resp.getCode() != Status.OK.getCode()) {
             throw new MsgServerException(resp.getMsg());
         }
     }

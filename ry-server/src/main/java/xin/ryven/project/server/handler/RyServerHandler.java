@@ -12,11 +12,9 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpStatus;
 import xin.ryven.project.common.enums.MsgType;
 import xin.ryven.project.common.service.HeartBeatService;
-import xin.ryven.project.common.spring.SpringBeanUtils;
 import xin.ryven.project.common.vo.MsgVo;
 import xin.ryven.project.server.holder.ChannelReadHolder;
 import xin.ryven.project.server.holder.NettyAttrHolder;
@@ -31,11 +29,19 @@ import xin.ryven.project.server.service.ChannelReadService;
 @ChannelHandler.Sharable
 public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
 
+    private final RyServer ryServer;
+    private final HeartBeatService heartBeatService;
+
+    public RyServerHandler(RyServer ryServer, HeartBeatService heartBeatService) {
+        this.ryServer = ryServer;
+        this.heartBeatService = heartBeatService;
+    }
+
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         log.info("{} offline", NettyAttrHolder.getUser(ctx));
         //下线
-        SpringBeanUtils.getBean(RyServer.class).offline((NioSocketChannel) ctx.channel());
+        ryServer.offline((NioSocketChannel) ctx.channel());
     }
 
     @Override
@@ -43,7 +49,6 @@ public class RyServerHandler extends SimpleChannelInboundHandler<Object> {
         IdleStateEvent event = (IdleStateEvent) evt;
         if (event.state() == IdleState.READER_IDLE) {
             //空闲未读取到消息
-            HeartBeatService heartBeatService = SpringBeanUtils.getBean(HeartBeatService.class);
             heartBeatService.process(ctx);
         }
     }
