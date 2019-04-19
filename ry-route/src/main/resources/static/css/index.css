@@ -9,7 +9,7 @@
 }
 
 .header .highlight {
-    color: #0b76ac;
+    color: #584756;
 }
 
 .flex {
@@ -22,7 +22,7 @@
     flex-direction: row;
     width: 800px;
     height: 500px;
-    background-color: #c7ccff;
+    background-color: #f5f5ff;
     margin: 0 auto;
     position: relative;
 }
@@ -30,7 +30,7 @@
 .box-left {
     flex-grow: 3;
     height: 100%;
-    background-color: #92dfff;
+    background-color: #eee;
     flex-direction: column;
     padding-bottom: 10px;
 }
@@ -109,7 +109,7 @@
 }
 
 .user-card.active {
-    background-color: #c7ccff;
+    background-color: #f5f5ff;
 }
 
 @keyframes msg-fade-in {

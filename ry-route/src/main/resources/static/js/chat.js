@@ -298,6 +298,10 @@ let vue = new Vue({
             if (deleteIndex > -1) {
                 users.splice(deleteIndex, 1)
             }
+            if (vue.chatUser.userId === data.userId) {
+                vue.messages = []
+                vue.chatUser = {}
+            }
             vue.users = users
         }
     }
