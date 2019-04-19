@@ -40,8 +40,9 @@ public class ServerApplication implements CommandLineRunner {
                 .host(properties.getServerHost())
                 .port(properties.getServerImPort())
                 .httpPort(properties.getServerPort()).build();
+        serverAddress.setDynamicHost();
         if (StringUtils.isEmpty(serverAddress.getHost())) {
-            serverAddress.setDynamicHost();
+            serverAddress.setHost(serverAddress.getLocaleHost());
         }
         return serverAddress;
     }

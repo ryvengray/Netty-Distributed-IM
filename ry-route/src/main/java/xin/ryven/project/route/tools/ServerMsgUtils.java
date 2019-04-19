@@ -47,7 +47,7 @@ public class ServerMsgUtils {
 
         //请求
         HttpEntity<MultiValueMap> httpEntity = new HttpEntity<>(postParameters, headers);
-        String url = "http://" + serverAddress.getHost() + ":" + serverAddress.getHttpPort() + properties.getSendMsgUrl();
+        String url = "http://" + serverAddress.getLocaleHost() + ":" + serverAddress.getHttpPort() + properties.getSendMsgUrl();
         try {
             ResponseEntity<Resp> respResponseEntity = restTemplate.postForEntity(url, httpEntity, Resp.class);
             return respResponseEntity.getBody();
