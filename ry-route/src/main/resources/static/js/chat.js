@@ -136,7 +136,7 @@ let vue = new Vue({
                             var data = res.data
                             if (data.code === 0) {
                                 //socket 连接
-                                let messages = vue.messages
+                                let messages = vue.messages.slice()
                                 let saveMsg = {'username': vue.user.username, 'msg': msg, 'me': true}
                                 messages.push(saveMsg)
                                 vue.messages = messages
@@ -186,7 +186,7 @@ let vue = new Vue({
                     //判断是否是当前用户
                     let msg = {'username': data.username, 'msg': data.content}
                     if (vue.chatUser.userId === fromUser) {
-                        let messages = vue.messages
+                        let messages = vue.messages.slice()
                         messages.push(msg)
                         vue.messages = messages
                         //全局
@@ -253,7 +253,6 @@ let vue = new Vue({
                         user.unread = 0
                         //重载消息
                         vue.messages = allMessages[ele] || []
-                        console.log( allMessages[ele])
                         change = true
                         vue.chatUser = user
                     }
