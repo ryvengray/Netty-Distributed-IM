@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+JAVA_OPTS='-Xmx128m -Xms32m -Xmn32m -XX:SurvivorRatio=8 -XX:MetaspaceSize=16m -XX:MaxMetaspaceSize=128m -XX:MaxTenuringThreshold=15'
 http_port=8888
 if [ $# -gt 0 ]
 then
@@ -20,6 +21,6 @@ then
     fi
 fi
 echo 'Route starting... port: ['${http_port}']:'
-nohup java -jar ry-route/target/ry-route-1.0.jar --server.port=${http_port} --logging.file=./logs/ry-route-${http_port}.log > /dev/null 2>&1 &
+nohup java ${JAVA_OPTS} -jar ry-route/target/ry-route-1.0.jar --server.port=${http_port} --logging.file=./logs/ry-route-${http_port}.log > /dev/null 2>&1 &
 sleep 3
 tail -f ./logs/ry-route-${http_port}.log

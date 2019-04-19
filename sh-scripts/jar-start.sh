@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+JAVA_OPTS='-Xmx128m -Xms32m -Xmn32m -XX:SurvivorRatio=8 -XX:MetaspaceSize=16m -XX:MaxMetaspaceSize=128m -XX:MaxTenuringThreshold=15'
 if [ $# -gt 1 ]
 then
    server_name=$1
@@ -21,7 +22,7 @@ fi
 echo '首先关闭端口 ['${http_port}']'
 curl -X POST http://localhost:${http_port}/actuator/shutdown
 echo '启动Server, HTTP端口 ['${http_port}']:'
-nohup java -jar ${server_name}/target/${server_name}-1.0.jar --server.port=${http_port} --logging.file=./logs/${server_name}-${http_port}.log > /dev/null 2>&1 &
+nohup java ${JAVA_OPTS} -jar ${server_name}/target/${server_name}-1.0.jar --server.port=${http_port} --logging.file=./logs/${server_name}-${http_port}.log > /dev/null 2>&1 &
 sleep 3
 ##tail -f ./logs/${server_name}r-${http_port}.log
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+JAVA_OPTS='-Xmx128m -Xms32m -Xmn32m -XX:SurvivorRatio=8 -XX:MetaspaceSize=16m -XX:MaxMetaspaceSize=128m -XX:MaxTenuringThreshold=15'
 http_port=9110
 if [ $# -gt 0 ]
 then
@@ -20,6 +21,6 @@ then
     fi
 fi
 echo 'Config Server starting... port: ['${http_port}']:'
-nohup java -jar ry-config-server/target/ry-config-server-1.0.jar --server.port=${http_port} --logging.file=./logs/ry-config-server-${http_port}.log > /dev/null 2>&1 &
+nohup java ${JAVA_OPTS} -jar ry-config-server/target/ry-config-server-1.0.jar --server.port=${http_port} --logging.file=./logs/ry-config-server-${http_port}.log > /dev/null 2>&1 &
 sleep 3
 tail -f ./logs/ry-config-server-${http_port}.log
